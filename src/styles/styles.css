@@ -1,0 +1,14 @@
+QMainWindow {
+    background-color: #012A4A;    
+}
+
+.uploadBtn {
+    font-size: 16px;
+    font-family: 'Nunito SemiBold';
+    border-radius: 15px;
+    background-color: #61A5C2;
+}
+
+.uploadBtn:hover {
+    background-color: #A9D6E5;
+}
