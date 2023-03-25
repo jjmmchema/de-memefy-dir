@@ -25,22 +25,21 @@ class Model():
         
         imgArr = np.asarray(img, dtype=np.float32)
         imgArr = imgArr.transpose((2, 0, 1)) / 255
-        imgArr = imgArr[None, :]
+        # imgArr = imgArr[None, :] 
 
         return imgArr
 
-    def predictDir(self, dirName: str):
+    def loadImgsInDir(self, dirName: str):
+        imgs = []
         for path, _, files in os.walk(dirName):
             for f in files:
                 filePath = os.path.abspath(os.path.join(path, f))
                 if filePath.lower().endswith(self.__imgExtensions):
-                    try:
-                        self.predict(filePath)
-                    except:
-                        print('Error with file {}'.format(filePath))
+                    imgs.append(self.loadImageToArray(filePath))
+        return np.array(imgs)
 
-    def predict(self, imgPath: str):
-        imgArr = self.loadImageToArray(imgPath)
+    def predict(self, dirPath: str):
+        imgArr = self.loadImgsInDir(dirPath)
         input = {self.__modelSession.get_inputs()[0].name: imgArr}
         res = self.__modelSession.run(None, input)
         print(res)
