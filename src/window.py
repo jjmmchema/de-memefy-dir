@@ -44,8 +44,9 @@ class Window(QtWidgets.QMainWindow):
 
     def showUploadDirDialog(self):
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
-        results = self.model.predict(dirName)
-        self.organizeFilesInDir(results)
+        if dirName:
+            results = self.model.predict(dirName)
+            self.organizeFilesInDir(results)
 
     def organizeFilesInDir(self, results: list) -> None:
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
