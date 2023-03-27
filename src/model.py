@@ -40,6 +40,9 @@ class Model():
 
     def predict(self, dirPath: str):
         imgArr = self.loadImgsInDir(dirPath)
-        input = {self.__modelSession.get_inputs()[0].name: imgArr}
-        res = self.__modelSession.run(None, input)
-        print(res)
+        results = []
+        for img in imgArr:    
+            input = {self.__modelSession.get_inputs()[0].name: img[np.newaxis, :]}
+            res = self.__modelSession.run(None, input)
+            results.append(res)
+        return res

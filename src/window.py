@@ -1,3 +1,5 @@
+import os
+
 from model import Model
 
 from PyQt6 import QtWidgets, QtGui, QtCore
@@ -22,14 +24,11 @@ class Window(QtWidgets.QMainWindow):
         self.btnsLayout = QtWidgets.QHBoxLayout()
         self.btnsLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.btnsLayout.setSpacing(10)
-
-        self.uploadFileBtn = self.createBtn('Upload File', 125, 30, 'uploadBtn')
-        self.uploadFileBtn.clicked.connect(self.showUploadFileDialog)
         
         self.uploadDirBtn = self.createBtn('Upload Folder', 125, 30, 'uploadBtn')
         self.uploadDirBtn.clicked.connect(self.showUploadDirDialog)
 
-        self.btnsLayout.addWidget(self.uploadFileBtn)
+        # self.btnsLayout.addWidget(self.uploadFileBtn)
         self.btnsLayout.addWidget(self.uploadDirBtn)
 
         self.outerLayout.addLayout(self.btnsLayout)
@@ -43,16 +42,18 @@ class Window(QtWidgets.QMainWindow):
         if event.key() == Qt.Key.Key_Escape:
             self.close()
 
-    def showUploadFileDialog(self):
-        fileName = QtWidgets.QFileDialog.getOpenFileName()[0]
-        try:
-            self.model.predict(fileName)
-        except:
-            pass
-
     def showUploadDirDialog(self):
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
-        self.model.predictDir(dirName)
+        results = self.model.predict(dirName)
+        self.organizeFilesInDir(results)
+
+    def organizeFilesInDir(self, results: list) -> None:
+        dirName = QtWidgets.QFileDialog.getExistingDirectory()
+        if dirName:
+            memesDir = os.path.join(dirName, 'memes')
+            othersDir = os.path.join(dirName, 'others')
+            os.mkdir(memesDir)
+            os.mkdir(othersDir)
 
     def createBtn(self, text: str, w: int, h: int, *classes):
         btn = QtWidgets.QPushButton(text)
