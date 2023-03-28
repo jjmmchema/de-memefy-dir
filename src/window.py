@@ -1,6 +1,11 @@
 import os
+import shutil
+
+from typing import List
+from pathlib import Path
 
 from model import Model
+from imageContainer import ImageContainer
 
 from PyQt6 import QtWidgets, QtGui, QtCore
 from PyQt6.QtCore import Qt
@@ -48,13 +53,22 @@ class Window(QtWidgets.QMainWindow):
             results = self.model.predict(dirName)
             self.organizeFilesInDir(results)
 
-    def organizeFilesInDir(self, results: list) -> None:
+    def organizeFilesInDir(self, results: List[ImageContainer]) -> None:
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
-        if dirName:
-            memesDir = os.path.join(dirName, 'memes')
-            othersDir = os.path.join(dirName, 'others')
-            os.mkdir(memesDir)
-            os.mkdir(othersDir)
+        if not dirName:
+            return
+    
+        memesDir = Path(dirName) / 'memes'
+        othersDir = Path(dirName) / 'others'
+
+        memesDir.mkdir(exist_ok=True)
+        othersDir.mkdir(exist_ok=True)
+
+        for container in results:
+            if container.imgLabel == 'Meme':
+                shutil.move(container.imgPath, memesDir / container.imgName)
+            elif container.imgLabel == 'Other':
+                shutil.move(container.imgPath, othersDir / container.imgName)
 
     def createBtn(self, text: str, w: int, h: int, *classes):
         btn = QtWidgets.QPushButton(text)

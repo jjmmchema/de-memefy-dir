@@ -51,6 +51,6 @@ class Model():
             if res[0] >= 0.5:
                 container.imgLabel = 'Meme'
             else:
-                container.imgLabel = 'Family'
+                container.imgLabel = 'Other'
             
         return containers
