@@ -45,13 +45,12 @@ class Model():
 
     def predict(self, dirPath: str) -> list:
         containers = self.loadImgsInDir(dirPath)
-        results = []
         for container in containers:    
             input = {self.__modelSession.get_inputs()[0].name: container.imgArr}
             res = self.__modelSession.run(None, input)
-            if res >= 0.5:
-                print("Meme")
+            if res[0] >= 0.5:
+                container.imgLabel = 'Meme'
             else:
-                print("Family")
-            results.append(res)
-        return res
+                container.imgLabel = 'Family'
+            
+        return containers
