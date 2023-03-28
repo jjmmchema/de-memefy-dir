@@ -4,6 +4,9 @@ import onnxruntime as oxr
 
 from PIL import Image
 from pathlib import Path
+from typing import List
+
+from imageContainer import ImageContainer
 
 class Model():
 
@@ -25,24 +28,30 @@ class Model():
         
         imgArr = np.asarray(img, dtype=np.float32)
         imgArr = imgArr.transpose((2, 0, 1)) / 255
-        # imgArr = imgArr[None, :] 
+        imgArr = imgArr[None, :] 
 
         return imgArr
 
-    def loadImgsInDir(self, dirName: str):
-        imgs = []
+    def loadImgsInDir(self, dirName: str) -> List[ImageContainer]:
+        containers = []
+
         for path, _, files in os.walk(dirName):
             for f in files:
                 filePath = os.path.abspath(os.path.join(path, f))
                 if filePath.lower().endswith(self.__imgExtensions):
-                    imgs.append(self.loadImageToArray(filePath))
-        return np.array(imgs)
+                    containers.append(ImageContainer(filePath,
+                                                     self.loadImageToArray(filePath)))
+        return containers
 
-    def predict(self, dirPath: str):
-        imgArr = self.loadImgsInDir(dirPath)
+    def predict(self, dirPath: str) -> list:
+        containers = self.loadImgsInDir(dirPath)
         results = []
-        for img in imgArr:    
-            input = {self.__modelSession.get_inputs()[0].name: img[np.newaxis, :]}
+        for container in containers:    
+            input = {self.__modelSession.get_inputs()[0].name: container.imgArr}
             res = self.__modelSession.run(None, input)
+            if res >= 0.5:
+                print("Meme")
+            else:
+                print("Family")
             results.append(res)
         return res
