@@ -2,10 +2,21 @@ QMainWindow {
     background-color: #012A4A;    
 }
 
-.uploadBtn {
+.general {
     font-size: 16px;
     font-family: 'Nunito SemiBold';
+}
+
+.roundCorners {
     border-radius: 15px;
+}
+
+.dirEdit {
+    font-style: italic;
+    padding-left: 10px;
+}
+
+.uploadBtn {
     background-color: #61A5C2;
 }
 

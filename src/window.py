@@ -25,22 +25,37 @@ class Window(QtWidgets.QMainWindow):
         
         self.outerLayout = QtWidgets.QVBoxLayout()
         self.outerLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.outerLayout.setSpacing(20)
 
-        self.btnsLayout = QtWidgets.QHBoxLayout()
-        self.btnsLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.btnsLayout.setSpacing(10)
+        self.inputLayout = QtWidgets.QHBoxLayout()
+        self.inputLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.inputLayout.setSpacing(10)
         
-        self.uploadDirBtn = self.createBtn('Upload Folder', 125, 30, 'uploadBtn')
+        self.outputLayout = QtWidgets.QHBoxLayout()
+        self.outputLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.outputLayout.setSpacing(10)
+
+        self.inputDirLabel = self.createLineEdit(350, 30, 'Folder with images', 'general', 'dirEdit', 'roundCorners')
+        self.uploadDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.uploadDirBtn.clicked.connect(self.showUploadDirDialog)
 
-        # self.btnsLayout.addWidget(self.uploadFileBtn)
-        self.btnsLayout.addWidget(self.uploadDirBtn)
+        self.outputDirLabel = self.createLineEdit(350, 30, 'Folder to save results', 'general', 'dirEdit', 'roundCorners')
+        self.saveToDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
+        self.saveToDirBtn.clicked.connect(self.showUploadDirDialog)
 
-        self.outerLayout.addLayout(self.btnsLayout)
+        self.inputLayout.addWidget(self.inputDirLabel)
+        self.inputLayout.addWidget(self.uploadDirBtn)
+
+        self.outputLayout.addWidget(self.outputDirLabel)
+        self.outputLayout.addWidget(self.saveToDirBtn)
+        
+        self.outerLayout.addLayout(self.inputLayout)
+        self.outerLayout.addLayout(self.outputLayout)
 
         w = QtWidgets.QWidget()
         w.setLayout(self.outerLayout)
         self.setCentralWidget(w)
+        self.setFocus()
         self.show()
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
@@ -70,12 +85,21 @@ class Window(QtWidgets.QMainWindow):
             elif container.imgLabel == 'Other':
                 shutil.move(container.imgPath, othersDir / container.imgName)
 
-    def createBtn(self, text: str, w: int, h: int, *classes):
+    def createBtn(self, w: int, h: int, text: str, *classes):
         btn = QtWidgets.QPushButton(text)
         btn.setFixedSize(w, h)
+        return self.setClasses(btn, classes)
+    
+    def createLineEdit(self, w: int, h:int, placeHolder: str= '', *classes):
+        le = QtWidgets.QLineEdit()
+        le.setFixedSize(w, h)
+        le.setPlaceholderText(placeHolder)
+        return self.setClasses(le, classes)
+
+    def setClasses(self, w: QtWidgets.QWidget, classes):
         if classes:
-            btn.setProperty('class', ' '.join(classes))
-        return btn
+            w.setProperty('class', ' '.join(classes))
+        return w
 
     def loadStyleSheet(self, path: str="src/styles/styles.css") -> None:
         with open(path, "r") as f:
