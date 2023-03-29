@@ -36,6 +36,7 @@ class Window(QtWidgets.QMainWindow):
         self.outputLayout.setSpacing(10)
 
         self.inputDirLabel = self.createLineEdit(350, 30, 'Folder with images', 'general', 'dirEdit', 'roundCorners')
+        self.inputDirLabel.installEventFilter(self)
         self.uploadDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.uploadDirBtn.clicked.connect(self.showUploadDirDialog)
 
@@ -65,6 +66,22 @@ class Window(QtWidgets.QMainWindow):
         if event.key() == Qt.Key.Key_Escape:
             self.close()
 
+    def eventFilter(self, source: QtCore.QObject, event: QtCore.QEvent) -> bool:
+    
+        if source == self.inputDirLabel:
+            if event.type() == QtCore.QEvent.Type.FocusIn:
+                self.setClasses(self.inputDirLabel, 'general', 'leClicked','roundCorners')
+                self.inputDirLabel.setPlaceholderText('')
+                self.loadStyleSheet()
+
+            elif event.type() == QtCore.QEvent.Type.FocusOut:
+                self.setClasses(self.inputDirLabel, 'general', 'dirEdit','roundCorners')
+                self.inputDirLabel.setPlaceholderText('Folder with images')
+                self.loadStyleSheet()
+            
+        
+        return super(Window, self).eventFilter(source, event)
+
     def showUploadDirDialog(self):
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
         if dirName:
@@ -91,15 +108,15 @@ class Window(QtWidgets.QMainWindow):
     def createBtn(self, w: int, h: int, text: str, *classes):
         btn = QtWidgets.QPushButton(text)
         btn.setFixedSize(w, h)
-        return self.setClasses(btn, classes)
+        return self.setClasses(btn, *classes)
     
     def createLineEdit(self, w: int, h:int, placeHolder: str= '', *classes):
         le = QtWidgets.QLineEdit()
         le.setFixedSize(w, h)
         le.setPlaceholderText(placeHolder)
-        return self.setClasses(le, classes)
+        return self.setClasses(le, *classes)
 
-    def setClasses(self, w: QtWidgets.QWidget, classes):
+    def setClasses(self, w: QtWidgets.QWidget, *classes):
         if classes:
             w.setProperty('class', ' '.join(classes))
         return w

@@ -11,6 +11,11 @@ QMainWindow {
     border-radius: 15px;
 }
 
+.leClicked {
+    font-style: normal;
+    padding-left: 10px;
+}
+
 .dirEdit {
     font-style: italic;
     padding-left: 10px;
