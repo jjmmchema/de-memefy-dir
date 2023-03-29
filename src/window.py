@@ -43,6 +43,8 @@ class Window(QtWidgets.QMainWindow):
         self.saveToDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.saveToDirBtn.clicked.connect(self.showUploadDirDialog)
 
+        self.runBtn = self.createBtn(125, 30, 'Run', 'general', 'uploadBtn', 'roundCorners')
+
         self.inputLayout.addWidget(self.inputDirLabel)
         self.inputLayout.addWidget(self.uploadDirBtn)
 
@@ -51,6 +53,7 @@ class Window(QtWidgets.QMainWindow):
         
         self.outerLayout.addLayout(self.inputLayout)
         self.outerLayout.addLayout(self.outputLayout)
+        self.outerLayout.addWidget(self.runBtn, alignment=Qt.AlignmentFlag.AlignCenter)
 
         w = QtWidgets.QWidget()
         w.setLayout(self.outerLayout)
