@@ -35,12 +35,13 @@ class Window(QtWidgets.QMainWindow):
         self.outputLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.outputLayout.setSpacing(10)
 
-        self.inputDirLabel = self.createLineEdit(350, 30, 'Folder with images', 'general', 'dirEdit', 'roundCorners')
+        self.inputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
         self.inputDirLabel.installEventFilter(self)
         self.uploadDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.uploadDirBtn.clicked.connect(self.showUploadDirDialog)
 
-        self.outputDirLabel = self.createLineEdit(350, 30, 'Folder to save results', 'general', 'dirEdit', 'roundCorners')
+        self.outputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
+        self.outputDirLabel.installEventFilter(self)
         self.saveToDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.saveToDirBtn.clicked.connect(self.showUploadDirDialog)
 
@@ -67,16 +68,23 @@ class Window(QtWidgets.QMainWindow):
             self.close()
 
     def eventFilter(self, source: QtCore.QObject, event: QtCore.QEvent) -> bool:
-    
+        
+        obj = None
+
         if source == self.inputDirLabel:
+            obj = self.inputDirLabel
+        if source == self.outputDirLabel:
+            obj = self.outputDirLabel
+
+        if isinstance(obj, QtWidgets.QLineEdit):
             if event.type() == QtCore.QEvent.Type.FocusIn:
-                self.setClasses(self.inputDirLabel, 'general', 'leClicked','roundCorners')
-                self.inputDirLabel.setPlaceholderText('')
+                self.setClasses(obj, 'general', 'leClicked','roundCorners')
+                obj.setPlaceholderText('')
                 self.loadStyleSheet()
 
             elif event.type() == QtCore.QEvent.Type.FocusOut:
-                self.setClasses(self.inputDirLabel, 'general', 'dirEdit','roundCorners')
-                self.inputDirLabel.setPlaceholderText('Folder with images')
+                self.setClasses(obj, 'general', 'dirEdit','roundCorners')
+                obj.setPlaceholderText('Select a folder...')
                 self.loadStyleSheet()
             
         
