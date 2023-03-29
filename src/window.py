@@ -3,6 +3,7 @@ import shutil
 
 from typing import List
 from pathlib import Path
+from functools import partial
 
 from model import Model
 from imageContainer import ImageContainer
@@ -39,16 +40,16 @@ class Window(QtWidgets.QMainWindow):
         self.inputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
         self.inputDirLabel.installEventFilter(self)
         self.uploadDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
-        self.uploadDirBtn.clicked.connect(self.showUploadDirDialog)
+        self.uploadDirBtn.clicked.connect(partial(self.showUploadDirDialog, 'uploadDirBtn'))
 
         self.outputFolderTxt = self.createLabel(550, 'Folder to which the images will be moved after classification:', 'labelG', 'roundCorners')
         self.outputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
         self.outputDirLabel.installEventFilter(self)
         self.saveToDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
-        # self.saveToDirBtn.clicked.connect(self.showUploadDirDialog)
-        self.saveToDirBtn.clicked.connect(lambda: self.btnChangeLabelText(self.outputDirLabel))
+        self.saveToDirBtn.clicked.connect(partial(self.showUploadDirDialog, 'saveToDirBtn'))
 
         self.runBtn = self.createBtn(120, 30, 'Run', 'general', 'uploadBtn', 'roundCorners')
+        self.runBtn.clicked.connect(self.runPrediction)
 
         centerAbs = Qt.AlignmentFlag.AlignCenter
 
@@ -97,14 +98,20 @@ class Window(QtWidgets.QMainWindow):
         
         return super(Window, self).eventFilter(source, event)
 
-    def showUploadDirDialog(self):
+    def showUploadDirDialog(self, btnName: str):
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
         if dirName:
-            results = self.model.predict(dirName)
-            self.organizeFilesInDir(results)
+            if btnName == 'uploadDirBtn':
+                self.changeLabelTxt(self.inputDirLabel, dirName)
+            elif btnName == 'saveToDirBtn':
+                self.changeLabelTxt(self.outputDirLabel, dirName)
+            
+    def runPrediction(self):
+        results = self.model.predict(self.inputDirLabel.text())
+        self.organizeFilesInDir(results)
 
     def organizeFilesInDir(self, results: List[ImageContainer]) -> None:
-        dirName = QtWidgets.QFileDialog.getExistingDirectory()
+        dirName = self.outputDirLabel.text()
         if not dirName:
             return
     
@@ -120,9 +127,9 @@ class Window(QtWidgets.QMainWindow):
             elif container.imgLabel == 'Other':
                 shutil.move(container.imgPath, othersDir / container.imgName)
 
-    def btnChangeLabelText(self, label: QtWidgets.QLabel):
+    def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str):
         label.setFocus()
-        label.setText('a')
+        label.setText(txt)
 
     def createLabel(self, w:int, text: str, *classes):
         lb = QtWidgets.QLabel(text)
