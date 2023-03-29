@@ -1,14 +1,22 @@
 QMainWindow {
-    background-color: #012A4A;    
+    background-color: #18122B;    
 }
 
 .general {
-    font-size: 16px;
+    font-size: 18px;
+    color: white;
     font-family: 'Nunito SemiBold';
+    background-color: #443C68;
 }
 
 .roundCorners {
     border-radius: 15px;
+}
+
+.labelG {
+    font-size: 20px;
+    border: 2px solid white;
+    color: white;
 }
 
 .leClicked {
@@ -22,9 +30,9 @@ QMainWindow {
 }
 
 .uploadBtn {
-    background-color: #61A5C2;
+    background-color: #433180;
 }
 
 .uploadBtn:hover {
-    background-color: #A9D6E5;
+    background-color: #635985;
 }

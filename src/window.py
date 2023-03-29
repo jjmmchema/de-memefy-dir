@@ -35,27 +35,34 @@ class Window(QtWidgets.QMainWindow):
         self.outputLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.outputLayout.setSpacing(10)
 
+        self.inputFolderTxt = self.createLabel(400, 'Folder that contains the images to classify:', 'labelG', 'roundCorners')
         self.inputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
         self.inputDirLabel.installEventFilter(self)
-        self.uploadDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
+        self.uploadDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.uploadDirBtn.clicked.connect(self.showUploadDirDialog)
 
+        self.outputFolderTxt = self.createLabel(550, 'Folder to which the images will be moved after classification:', 'labelG', 'roundCorners')
         self.outputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
         self.outputDirLabel.installEventFilter(self)
-        self.saveToDirBtn = self.createBtn(125, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
-        self.saveToDirBtn.clicked.connect(self.showUploadDirDialog)
+        self.saveToDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
+        # self.saveToDirBtn.clicked.connect(self.showUploadDirDialog)
+        self.saveToDirBtn.clicked.connect(lambda: self.btnChangeLabelText(self.outputDirLabel))
 
-        self.runBtn = self.createBtn(125, 30, 'Run', 'general', 'uploadBtn', 'roundCorners')
+        self.runBtn = self.createBtn(120, 30, 'Run', 'general', 'uploadBtn', 'roundCorners')
+
+        centerAbs = Qt.AlignmentFlag.AlignCenter
 
         self.inputLayout.addWidget(self.inputDirLabel)
         self.inputLayout.addWidget(self.uploadDirBtn)
 
         self.outputLayout.addWidget(self.outputDirLabel)
         self.outputLayout.addWidget(self.saveToDirBtn)
-        
+
+        self.outerLayout.addWidget(self.inputFolderTxt, alignment=centerAbs)        
         self.outerLayout.addLayout(self.inputLayout)
+        self.outerLayout.addWidget(self.outputFolderTxt, alignment=centerAbs)
         self.outerLayout.addLayout(self.outputLayout)
-        self.outerLayout.addWidget(self.runBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.outerLayout.addWidget(self.runBtn, alignment=centerAbs)
 
         w = QtWidgets.QWidget()
         w.setLayout(self.outerLayout)
@@ -82,7 +89,7 @@ class Window(QtWidgets.QMainWindow):
                 obj.setPlaceholderText('')
                 self.loadStyleSheet()
 
-            elif event.type() == QtCore.QEvent.Type.FocusOut:
+            elif event.type() == QtCore.QEvent.Type.FocusOut and obj.text() == '':
                 self.setClasses(obj, 'general', 'dirEdit','roundCorners')
                 obj.setPlaceholderText('Select a folder...')
                 self.loadStyleSheet()
@@ -112,6 +119,17 @@ class Window(QtWidgets.QMainWindow):
                 shutil.move(container.imgPath, memesDir / container.imgName)
             elif container.imgLabel == 'Other':
                 shutil.move(container.imgPath, othersDir / container.imgName)
+
+    def btnChangeLabelText(self, label: QtWidgets.QLabel):
+        label.setFocus()
+        label.setText('a')
+
+    def createLabel(self, w:int, text: str, *classes):
+        lb = QtWidgets.QLabel(text)
+        lb.setFixedWidth(w)
+        lb.setFixedHeight(35)
+        lb.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        return self.setClasses(lb, *classes)
 
     def createBtn(self, w: int, h: int, text: str, *classes):
         btn = QtWidgets.QPushButton(text)
