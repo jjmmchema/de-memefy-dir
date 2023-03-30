@@ -87,11 +87,9 @@ class Window(QtWidgets.QMainWindow):
         self.setFocus()
         self.show()
 
-    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
-        if event.key() == Qt.Key.Key_Escape:
-            self.close()
+    # -------- Main functionality functions --------
 
-    def eventFilter(self, source: QtCore.QObject, event: QtCore.QEvent) -> bool:
+    def eventFilter(self, source: QtCore.QObject, event: QtCore.QEvent) -> bool:   # Override
         
         obj = None
 
@@ -142,9 +140,7 @@ class Window(QtWidgets.QMainWindow):
             elif container.imgLabel == 'Other':
                 shutil.move(container.imgPath, othersDir / container.imgName)
 
-    def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str):
-        label.setFocus()
-        label.setText(txt)
+    # -------- Widget-creating/modifying functions --------
 
     def createLabel(self, w:int, text: str, *classes):
         lb = QtWidgets.QLabel(text)
@@ -164,10 +160,22 @@ class Window(QtWidgets.QMainWindow):
         le.setPlaceholderText(placeHolder)
         return self.setClasses(le, *classes)
 
+    def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str):
+        label.setFocus()
+        label.setText(txt)
+
     def setClasses(self, w: QtWidgets.QWidget, *classes):
         if classes:
             w.setProperty('class', ' '.join(classes))
         return w
+
+    # -------- Function for key pressing events --------
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:   # Override
+        if event.key() == Qt.Key.Key_Escape:
+            self.close()
+
+    # -------- Loader functions --------
 
     def loadStyleSheet(self, path: str="src/styles/styles.css") -> None:
         with open(path, "r") as f:
