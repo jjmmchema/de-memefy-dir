@@ -24,39 +24,55 @@ class Window(QtWidgets.QMainWindow):
         self.loadFonts()
         self.loadStyleSheet()
         
+        # -------- Layouts --------
+        # Create the layout that will contain all other layouts
         self.outerLayout = QtWidgets.QVBoxLayout()
         self.outerLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.outerLayout.setSpacing(20)
 
+        # Layout that will contain all widgets associated with the input
         self.inputLayout = QtWidgets.QHBoxLayout()
         self.inputLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.inputLayout.setSpacing(10)
         
+        # Layout that will contain all widgets associated with the output
         self.outputLayout = QtWidgets.QHBoxLayout()
         self.outputLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.outputLayout.setSpacing(10)
 
+        # -------- Labels --------
+        # Both just contain the specified test
         self.inputFolderTxt = self.createLabel(400, 'Folder that contains the images to classify:', 'labelG', 'roundCorners')
-        self.inputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
-        self.inputDirLabel.installEventFilter(self)
-        self.uploadDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
-        self.uploadDirBtn.clicked.connect(partial(self.showUploadDirDialog, 'uploadDirBtn'))
-
         self.outputFolderTxt = self.createLabel(550, 'Folder to which the images will be moved after classification:', 'labelG', 'roundCorners')
-        self.outputDirLabel = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
-        self.outputDirLabel.installEventFilter(self)
-        self.saveToDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
-        self.saveToDirBtn.clicked.connect(partial(self.showUploadDirDialog, 'saveToDirBtn'))
 
+        # -------- Line Edits --------
+        # Line Edits to allow the user to type the path of the input and output folder, respectively.
+        # Alternatively, they can show the path of the folder selected through one of the buttons.
+        self.inputDirLEdit = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
+        self.outputDirLEdit = self.createLineEdit(350, 30, 'Select a folder...', 'general', 'dirEdit', 'roundCorners')
+
+        # Allow self (Window in this case) to implement a function for filtering events that
+        # involve any of these Line Edits.
+        self.inputDirLEdit.installEventFilter(self) 
+        self.outputDirLEdit.installEventFilter(self)
+
+        # -------- Buttons --------
+        self.uploadDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
+        self.saveToDirBtn = self.createBtn(140, 30, 'Upload Folder', 'general','uploadBtn', 'roundCorners')
         self.runBtn = self.createBtn(120, 30, 'Run', 'general', 'uploadBtn', 'roundCorners')
+
+        # Connect each button to it's respective function
+        self.uploadDirBtn.clicked.connect(partial(self.showUploadDirDialog, 'uploadDirBtn'))
+        self.saveToDirBtn.clicked.connect(partial(self.showUploadDirDialog, 'saveToDirBtn'))
         self.runBtn.clicked.connect(self.runPrediction)
 
-        centerAbs = Qt.AlignmentFlag.AlignCenter
+        # -------- Add widgets to GUI --------
+        centerAbs = Qt.AlignmentFlag.AlignCenter   # For the sake of less typing
 
-        self.inputLayout.addWidget(self.inputDirLabel)
+        self.inputLayout.addWidget(self.inputDirLEdit)
         self.inputLayout.addWidget(self.uploadDirBtn)
 
-        self.outputLayout.addWidget(self.outputDirLabel)
+        self.outputLayout.addWidget(self.outputDirLEdit)
         self.outputLayout.addWidget(self.saveToDirBtn)
 
         self.outerLayout.addWidget(self.inputFolderTxt, alignment=centerAbs)        
@@ -79,10 +95,10 @@ class Window(QtWidgets.QMainWindow):
         
         obj = None
 
-        if source == self.inputDirLabel:
-            obj = self.inputDirLabel
-        if source == self.outputDirLabel:
-            obj = self.outputDirLabel
+        if source == self.inputDirLEdit:
+            obj = self.inputDirLEdit
+        if source == self.outputDirLEdit:
+            obj = self.outputDirLEdit
 
         if isinstance(obj, QtWidgets.QLineEdit):
             if event.type() == QtCore.QEvent.Type.FocusIn:
@@ -95,23 +111,22 @@ class Window(QtWidgets.QMainWindow):
                 obj.setPlaceholderText('Select a folder...')
                 self.loadStyleSheet()
             
-        
         return super(Window, self).eventFilter(source, event)
 
     def showUploadDirDialog(self, btnName: str):
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
         if dirName:
             if btnName == 'uploadDirBtn':
-                self.changeLabelTxt(self.inputDirLabel, dirName)
+                self.changeLabelTxt(self.inputDirLEdit, dirName)
             elif btnName == 'saveToDirBtn':
-                self.changeLabelTxt(self.outputDirLabel, dirName)
+                self.changeLabelTxt(self.outputDirLEdit, dirName)
             
     def runPrediction(self):
-        results = self.model.predict(self.inputDirLabel.text())
+        results = self.model.predict(self.inputDirLEdit.text())
         self.organizeFilesInDir(results)
 
     def organizeFilesInDir(self, results: List[ImageContainer]) -> None:
-        dirName = self.outputDirLabel.text()
+        dirName = self.outputDirLEdit.text()
         if not dirName:
             return
     
