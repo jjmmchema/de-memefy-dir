@@ -1,4 +1,3 @@
-import os
 import shutil
 
 from typing import List
@@ -90,7 +89,12 @@ class Window(QtWidgets.QMainWindow):
     # -------- Main functionality functions --------
 
     def eventFilter(self, source: QtCore.QObject, event: QtCore.QEvent) -> bool:   # Override
-        
+        """
+            Function that catches and handles all events involving any
+            of the QObject that has had the method _installEventFilter(self)_
+            invoked. 
+            self just means that this object, Window, will be the one handling the events.
+        """
         obj = None
 
         if source == self.inputDirLEdit:
@@ -109,7 +113,7 @@ class Window(QtWidgets.QMainWindow):
                 obj.setPlaceholderText('Select a folder...')
                 self.loadStyleSheet()
             
-        return super(Window, self).eventFilter(source, event)
+        return super(Window, self).eventFilter(source, event)   # Call super to keep the functionality inherited from QMainWindow
 
     def showUploadDirDialog(self, btnName: str):
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
