@@ -124,8 +124,14 @@ class Window(QtWidgets.QMainWindow):
                 self.changeLabelTxt(self.outputDirLEdit, dirName)
             
     def runPrediction(self):
-        results = self.model.predict(self.inputDirLEdit.text())
-        self.organizeFilesInDir(results)
+        if self.inputDirLEdit.text() and self.outputDirLEdit.text():
+            results = self.model.predict(self.inputDirLEdit.text())
+            self.organizeFilesInDir(results)
+        else:
+            dlg = QtWidgets.QMessageBox(self)
+            dlg.setWindowTitle('Warning')
+            dlg.setText('Please fill out all the fields')
+            dlg.exec()
 
     def organizeFilesInDir(self, results: List[ImageContainer]) -> None:
         dirName = self.outputDirLEdit.text()
