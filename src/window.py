@@ -115,7 +115,7 @@ class Window(QtWidgets.QMainWindow):
             
         return super(Window, self).eventFilter(source, event)   # Call super to keep the functionality inherited from QMainWindow
 
-    def showUploadDirDialog(self, btnName: str):
+    def showUploadDirDialog(self, btnName: str) -> None:
         dirName = QtWidgets.QFileDialog.getExistingDirectory()
         if dirName:
             if btnName == 'uploadDirBtn':
@@ -123,7 +123,7 @@ class Window(QtWidgets.QMainWindow):
             elif btnName == 'saveToDirBtn':
                 self.changeLabelTxt(self.outputDirLEdit, dirName)
             
-    def runPrediction(self):
+    def runPrediction(self) -> None:
         if self.inputDirLEdit.text() and self.outputDirLEdit.text():
             results = self.model.predict(self.inputDirLEdit.text())
             self.organizeFilesInDir(results)
@@ -151,19 +151,19 @@ class Window(QtWidgets.QMainWindow):
 
     # -------- Widget-creating/modifying functions --------
 
-    def createLabel(self, w:int, text: str, *classes):
+    def createLabel(self, w:int, text: str, *classes) -> QtWidgets.QLabel:
         lb = QtWidgets.QLabel(text)
         lb.setFixedWidth(w)
         lb.setFixedHeight(35)
         lb.setAlignment(Qt.AlignmentFlag.AlignCenter)
         return self.setClasses(lb, *classes)
 
-    def createBtn(self, w: int, h: int, text: str, *classes):
+    def createBtn(self, w: int, h: int, text: str, *classes) -> QtWidgets.QPushButton:
         btn = QtWidgets.QPushButton(text)
         btn.setFixedSize(w, h)
         return self.setClasses(btn, *classes)
     
-    def createLineEdit(self, w: int, h:int, placeHolder: str= '', *classes):
+    def createLineEdit(self, w: int, h:int, placeHolder: str= '', *classes) -> QtWidgets.QLineEdit:
         le = QtWidgets.QLineEdit()
         le.setFixedSize(w, h)
         le.setPlaceholderText(placeHolder)
@@ -175,11 +175,11 @@ class Window(QtWidgets.QMainWindow):
         dlg.setText(text)
         return dlg
 
-    def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str):
+    def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str) -> None:
         label.setFocus()
         label.setText(txt)
 
-    def setClasses(self, w: QtWidgets.QWidget, *classes):
+    def setClasses(self, w: QtWidgets.QWidget, *classes) -> QtWidgets.QWidget:
         if classes:
             w.setProperty('class', ' '.join(classes))
         return w
@@ -196,7 +196,7 @@ class Window(QtWidgets.QMainWindow):
         with open(path, "r") as f:
             self.setStyleSheet(f.read())
 
-    def loadFonts(self):
+    def loadFonts(self) -> None:
         id = QtGui.QFontDatabase.addApplicationFont('fonts/Nunito-Regular.ttf')     # Nunito
         id2 = QtGui.QFontDatabase.addApplicationFont('fonts/Nunito-SemiBold.ttf')   # Nunito SemiBold
 

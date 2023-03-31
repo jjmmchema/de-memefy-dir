@@ -11,7 +11,7 @@ class ImageContainer():
         self.imgLabel = None
         print(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'''Name: {self.imgName}
                    Path: {self.imgPath},
                    Label {self.imgLabel}'''
