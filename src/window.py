@@ -128,14 +128,13 @@ class Window(QtWidgets.QMainWindow):
             results = self.model.predict(self.inputDirLEdit.text())
             self.organizeFilesInDir(results)
         else:
-            dlg = QtWidgets.QMessageBox(self)
-            dlg.setWindowTitle('Warning')
-            dlg.setText('Please fill out all the fields')
+            dlg = self.createMessageBox('Warning', 'Please fill out all the fields')
             dlg.exec()
 
     def organizeFilesInDir(self, results: List[ImageContainer]) -> None:
-        dirName = self.outputDirLEdit.text()
-        if not dirName:
+        dirName = Path(self.outputDirLEdit.text())
+        if not dirName.exists():
+            self.createMessageBox('Warning', "Folder to save results doesn't exist").exec()
             return
     
         memesDir = Path(dirName) / 'memes'
@@ -169,6 +168,12 @@ class Window(QtWidgets.QMainWindow):
         le.setFixedSize(w, h)
         le.setPlaceholderText(placeHolder)
         return self.setClasses(le, *classes)
+    
+    def createMessageBox(self, title: str, text: str) -> QtWidgets.QMessageBox:
+        dlg = QtWidgets.QMessageBox(self)
+        dlg.setWindowTitle(title)
+        dlg.setText(text)
+        return dlg
 
     def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str):
         label.setFocus()
