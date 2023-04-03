@@ -173,7 +173,8 @@ class Window(QtWidgets.QMainWindow):
         dlg = QtWidgets.QMessageBox(self)
         dlg.setWindowTitle(title)
         dlg.setText(text)
-        return dlg
+        dlg.setFixedSize(50, 50)
+        return self.setClasses(dlg, 'general')
 
     def changeLabelTxt(self, label: QtWidgets.QLabel, txt: str) -> None:
         label.setFocus()
